@@ -1,0 +1,12 @@
+server:
+  port: 8090
+spring:
+  application:
+    name: sca-consumer
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848 #加入nacos和你的服务在同一台电脑上,默认向本机的nacos进行注册,这个地址可以不写
+feign:
+  hystrix:
+    enabled: true

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>cn.cd.zlit</groupId>
+    <artifactId>01-sca</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <!--创建此工程的子工程师,会默认创建这个元素
+        在这个元素内部会定义,当前项目下的一些模块
+        当堆父工程惊醒编译,打包时,会对modules元素
+        内部定义的子工程进行同样的编译和打包-->
+    <modules>
+        <module>src-provider</module>
+        <module>sca-consumer</module>
+        <module>sca-gateway</module>
+        <module>sca-common</module>
+    </modules>
+
+    <!--maven父工程的pom文件中一般要定义子模块
+        子工程中所依赖版本的管理,公共以来并且父工程的
+        打包方式一般为pom方式-->
+
+
+    <!--第一步 : 定义子工程中核心依赖的版本(注意,知识版本管理)-->
+    <dependencyManagement>
+        <dependencies>
+            <!--Spring boot 核心依赖版本定义(spring官方定义)-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>2.3.2.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!--Spring Cloud 微服务规范(Spring官方定义)-->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Hoxton.SR9</version>
+                <type>pom</type><!--假如scope为import ,type必须为pom-->
+                <scope>import</scope><!--引入三方依赖的版本设计-->
+            </dependency>
+            <!--Spring Cloud alibaba 依赖版本管理-->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>2.2.6.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <!--第二步 : 添加子工程所需要的公共依赖-->
+    <dependencies>
+        <!--lombok 依赖,子工程中如果需要lombok,则不需要再引入-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+            <!--scope设置jar的作用域,provided表示此依赖仅在编译阶段有效-->
+        </dependency>
+        <!--单元测试依赖-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope><!--test : 表示只能在test目录下使用这个依赖-->
+            <exclusions><!--排除依赖(用不到的)-->
+                <exclusion>
+                    <groupId>org.junit.jupiter</groupId>
+                    <artifactId>junit-jupiter-engine</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+    <!--第三步 : 定义当前工程工程模块及子工程的统一编译和运行版本-->
+    <build>
+        <!--项目构建配置,我们基于maven完成项目的编译,测试,打包等操作,
+            都是基于pom.xml完成这一系列的操作,但是编译和打包的配置都是
+            要写在build元素内的,而具体的编译和打包配置,有需要plugin去实现,
+            plugin元素不是必须的,maven有默认的plugin配置,常用插件可以去本地库查看-->
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+
+<!--创建聚合工程的目的就是更好实现工程间代码的复用-->

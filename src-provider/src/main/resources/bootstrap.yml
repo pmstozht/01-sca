@@ -1,0 +1,26 @@
+server:
+  port: 8082
+spring:
+  application:
+    name: sca-provider
+  cloud:
+    sentinel:
+      transport:
+        dashboard: localhost:8180 #这里描述的是sentinel控制台地址
+      eager: true #服务启动以后,就向sentinel控制台发送一个心跳信息,在sentinel控制台就显示此服务信息
+      web-context-unify: false #默认为true,会将所有的请求链路聚合到sentinel控制台中的sentinel_web_servlet_context下r
+    nacos:
+      discovery:
+        server-addr: localhost:8848 #加入nacos和你的服务在同一台电脑上,默认向本机的nacos进行注册,这个地址可以不写
+      config:
+        server-addr: localhost:8848
+        file-extension: yml
+        namespace: 7c8a4318-3d1f-4a5c-9e35-62fef63ce92b #默认命名空间为public
+        group: DEFAULT_GROUP_51
+        shared-configs[0]:
+                data-id: app-public.yml
+                refresh: true
+#logging:
+#  level:
+#    cn.cd.zlit.jt: debug
+#配置包以及子包中的日志级别

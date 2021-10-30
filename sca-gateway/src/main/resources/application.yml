@@ -1,0 +1,26 @@
+server:
+  port: 9000
+spring:
+  application:
+    name: sca-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+    sentinel:
+      transport:
+        dashboard: localhost:8180
+      eager: true
+    gateway:
+      routes: #配置网关路由规则
+        - id: route01  #路由id,自己指定一个唯一值即可
+          #uri: http://localhost:8081/ #网关帮我们转发的url,uri是统一资源标识
+          uri: lb://sca-provider
+          predicates: ###断言(谓此):匹配请求规则
+            - Path=/nacos/provider/echo/**  #请求路径定义,此路径对应uri中的资源
+          filters: ##网关过滤器,用于对谓词中的内容进行判断分析以及处理
+            - StripPrefix=1 #转发之前去掉path中第一层路径，例如nacos
+#我们打开浏览器输入http://localhost:9000/nacos/provider/echo/01时
+#网关会基于predicates对象对请求url基于predicates中定义的path进行比对,
+#假如请求url端口号后面的内容,与 predicates中path的定义是匹配的,此时会将url交给filter
+#过滤器filter对请求过滤后,会将请求地址转发到真是的微服务(通过uri指定)
